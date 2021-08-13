@@ -6,6 +6,7 @@ class DoublyLinkedList:
         Node(Inner Class): Inner class representing node in linked list.
         header(Node): Head of the linked list
         trailer(Node): Tail of the linked list
+        current(Node): Pointer to current node for iterator
         length(int): Size of the linked list
 
     Methods:
@@ -21,6 +22,8 @@ class DoublyLinkedList:
         delete(value): Deletes node with given value from linked list
         removeFirst(): Deletes first node from linked list
         removeLast(): Deletes last node from linked list
+        __iter__(): Returns an iterator for the linked list
+        __next__(): Returns next node value in linked list
         __str__(): Retruns string representation of linked list
     """
     def __init__(self):
@@ -36,6 +39,7 @@ class DoublyLinkedList:
         self.__header = self.Node(None, None, None) # Create header
         self.__trailer = self.Node(None, self.__header, None) # Trailer is preceded by header
         self.__header.set_next(self.__trailer) # Header is followed by trailer
+        self.__current = self.__header.get_next() # Pointer to current node in DLL for iterator
         self.__length = 0 # Number of nodes in linked list
 
     def size(self):
@@ -321,7 +325,7 @@ class DoublyLinkedList:
             raise ValueError('Value not in DLL')
         # If we found the value then delete the node
         return self.__remove(current)
-
+    
     def __str__(self):
         """
         String representation of DLL
@@ -338,6 +342,32 @@ class DoublyLinkedList:
             stringrep += '<- {} ->'.format(current.get_data())
             current = current.get_next()
         return stringrep
+    
+    def __iter__(self):
+        """
+        Returns linked list iterator
+        """
+        # Remember, self is our UnorderedList.
+        # In order to get to the first Node, we must do
+        current = self.__header.get_next()
+        # and then, until we have reached the end:
+        while current.get_next() is not None:
+            yield current.get_data()
+            # in order to get from one Node to the next one:
+            current = current.get_next()
+    
+    def __next__(self):
+        """
+        Returns next node's value in DLL.
+
+        1. Define myiter = mydll.__iter__()
+        2. print(next(myiter))
+        """
+        if self.__current == None:
+            raise StopIteration
+        value = self.__current.get_data()
+        self.__current = self.__current.get_next()
+        return value
 
     class Node:
         """
@@ -458,6 +488,15 @@ mydll.delete_at_index(mydll.size() - 1)
 print(mydll.__str__())
 mydll.delete('Selena')
 print(mydll.__str__())
-mydll.add_at_tail('Jemimah')
+mydll.add_at_tail('River')
+print(mydll.__str__())
+print('Last node: {}'.format(mydll.last()))
+# Iterating with iterator since DLL is Iterable
+for node in mydll:
+    print('Iterating with iterator: {}'.format(node))
+# Iterating with __iter__ and __next__
+myiter = mydll.__iter__()
+for i in range(mydll.size()):
+    print('Iterating with next: {}'.format(next(myiter)))
 print(mydll.__str__())
 print(mydll.last())
