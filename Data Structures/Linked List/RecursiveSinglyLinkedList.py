@@ -21,6 +21,29 @@ class RecursiveSinglyLinkedList:
         """
         return self.__length
     
+    def total(self):
+        """
+        Return total number of elements in linked list
+        """
+        return self.__recursive_total_helper_function(self.__head)
+
+    def __recursive_total_helper_function(self, node):
+        """
+        Recursive helper function to calculate total number
+        of nodes in linked list
+
+        Args:
+            node: Current node in RSLL
+        
+        Return:
+            Number of nodes in function call stack
+
+        Raises:
+        """
+        if node == None:
+            return 0
+        return 1 + self.__recursive_total_helper_function(node.get_next())
+    
     def is_empty(self):
         """
         Check if linked list is empty
@@ -252,6 +275,29 @@ class RecursiveSinglyLinkedList:
         # Inductive step
         return self.__recursive_contains_helper_function(value, node.get_next())
 
+    def __iter__(self):
+        """
+        Return iterator for RSLL
+        """
+        # Remember, self is our UnorderedList.
+        # In order to get to the first Node, we must do
+        current = self.__head
+        # and then, until we have reached the end:
+        while current is not None:
+            yield current.get_value()
+            # in order to get from one Node to the next one:
+            current = current.get_next()
+    
+    def __next__(self):
+        """
+        Next method for RSLL
+        """
+        if self.__current_node == None:
+            raise StopIteration
+        value = self.__current_node.get_value()
+        self.__current_node = self.__current_node.get_next()
+        return value
+            
     def reverse(self):
         """
         Reverses the order of the linked list
@@ -389,3 +435,8 @@ myrsll.add_at_tail('Juno')
 print(myrsll.__str__())
 myrsll.reverse()
 print(myrsll.__str__())
+print(myrsll.total())
+for node in myrsll:
+    print(node)
+myiter = iter(myrsll)
+print(next(myrsll))
