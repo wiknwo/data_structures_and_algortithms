@@ -7,6 +7,8 @@ class CircularlyLinkedList:
         Initializes CLL
         """
         self.__head = None
+        self.__current = self.__head # Pointer to current node in CLL for iterator
+        self.__index = 0 # Index for iterator
         self.__length = 0
 
     def size(self):
@@ -217,8 +219,37 @@ class CircularlyLinkedList:
             fast_pointer = fast_pointer.get_next().get_next()
             if slow_pointer == fast_pointer:
                 return True
-        return False   
+        return False 
 
+    def __iter__(self):
+        """
+        Returns iterator for CLL
+        """
+        # Remember, self is our UnorderedList.
+        # In order to get to the first Node, we must do
+        current = self.__head
+        # and then, until we have reached the end:
+        while current:
+            yield current.get_value()
+            # in order to get from one Node to the next one:
+            current = current.get_next()
+            if current == self.__head:
+                break
+
+    def __next__(self):  
+        """
+        Returns next node's value in CLL
+
+        1. Define myiter = mydll.__iter__()
+        2. print(next(myiter))
+        """
+        if self.__current == self.__head and self.__index != 0:
+            raise StopIteration
+        value = self.__current.get_data()
+        self.__current = self.__current.get_next()
+        self.__index += 1
+        return value
+        
     def __str__(self):
         """
         Return string representation of CLL
@@ -343,3 +374,12 @@ mycll.delete_at_index(7)
 print(mycll.__str__())
 mycll.remove_first()
 print(mycll.__str__())
+for node in mycll:
+    print('Iterator: {}'.format(node))
+myiter = mycll.__iter__()
+print('next: {}'.format(next(myiter)))
+print('next: {}'.format(next(myiter)))
+print('next: {}'.format(next(myiter)))
+print('next: {}'.format(next(myiter)))
+print('next: {}'.format(next(myiter)))
+print('next: {}'.format(next(myiter)))
