@@ -278,7 +278,7 @@ class DoublyLinkedList:
 
         Raises:
         """
-        if index > self.size() or index < 0:
+        if index >= self.size() or index < 0:
             raise ValueError('Index out of bounds')
         
         if index == 0:
