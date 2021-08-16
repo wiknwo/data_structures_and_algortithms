@@ -7,7 +7,21 @@ class CircularDoublyLinkedList:
         length(int): Length of the CDLL
 
     Methods:
-
+        size(): Returns size of linked list
+        is_empty(): Returns boolean indicating if linked list is empty
+        first(): Returns first node value in linked list
+        last(): Returns last node value in linked list
+        get_by_index(index): Retuns value of node at specified index
+        add_at_head(value): Adds new node to head of linked list and gives it value
+        add_at_tail(value): Adds new node to tail of linked list and gives it value
+        add_at_index(value, index): Adds new node with value at specified index in linked list
+        delete_at_index(index): Deletes node at specified index
+        delete(value): Deletes node with given value from linked list
+        removeFirst(): Deletes first node from linked list
+        removeLast(): Deletes last node from linked list
+        __iter__(): Returns an iterator for the linked list
+        __next__(): Returns next node value in linked list
+        __str__(): Retruns string representation of linked list
     """
     def __init__(self):
         """
@@ -15,6 +29,8 @@ class CircularDoublyLinkedList:
         """
         self.__header = self.Node()
         self.__length = 0
+        self.__current = self.__header # Pointer to current node for iterator
+        self.__index = 0 # Index for iterator
         
     def size(self):
         """
@@ -158,7 +174,7 @@ class CircularDoublyLinkedList:
 
         i, current = -1, None
         if index < self.size() // 2:
-            i, current = 0, self.__header.get_next()
+            i, current = 0, self.__header
             while current and i != index:
                 current = current.get_next()
                 i += 1
@@ -168,6 +184,89 @@ class CircularDoublyLinkedList:
                 current = current.get_previous()
                 i -= 1
         return self.__remove(current) 
+
+    def delete(self, value):
+        """
+        Delete node with specified value from CDLL
+        """
+        # If CDLL is empty
+        if self.is_empty():
+            raise ValueError('CDLL is empty')
+        # If CDLL contains only one node
+        if self.__header.get_data() == value and self.__header.get_next() == self.__header:
+            self.__header = self.Node()
+            return
+        # If head is to be deleted
+        if self.__header.get_data() == value:
+            return self.remove_first()
+        # If the tail is to be deleted
+        if self.__header.get_previous().get_data() == value:
+            return self.remove_last()
+        # If there is more than one node in CDLL
+        current = self.__header
+        # Traverse list till end reached or value found
+        while current.get_next() != self.__header and current.get_data() != value:
+            current = current.get_next()
+        # If node to be deleted found
+        if current.get_data() == value:
+            return self.__remove(current)
+        else:
+            raise ValueError('Value not in CDLL')
+
+    def get_by_index(self, index):
+        """
+        Return node's value at specified index
+        """
+        if index >= self.size() or index < 0:
+            raise IndexError('Index out of bounds')
+
+        if index == 0:
+            return self.first()
+        
+        if index == self.size() - 1:
+            return self.last()
+        
+        i, current = -1, None
+        if index < self.size() // 2:
+            i, current = 0, self.__header
+            while current and i != index:
+                current = current.get_next()
+                i += 1
+        else:
+            i, current = self.size() - 1, self.__header.get_previous()
+            while current and i != index:
+                current = current.get_previous()
+                i -= 1
+        return current.get_data()
+
+    def __iter__(self):
+        """
+        Returns iterator for CLL
+        """
+        # Remember, self is our UnorderedList.
+        # In order to get to the first Node, we must do
+        current = self.__header
+        # and then, until we have reached the end:
+        while True:
+            yield current.get_data()
+            # in order to get from one Node to the next one:
+            current = current.get_next()
+            if current == self.__header:
+                break
+
+    def __next__(self):  
+        """
+        Returns next node's value in CLL
+
+        1. Define myiter = mycdll.__iter__()
+        2. print(next(myiter))
+        """
+        if self.__current == self.__header and self.__index != 0:
+            raise StopIteration
+        value = self.__current.get_data()
+        self.__current = self.__current.get_next()
+        self.__index += 1
+        return value
 
     def __str__(self):
         """
@@ -302,4 +401,15 @@ print(mycdll)
 mycdll.add_at_index('Benjamin', 2)
 mycdll.add_at_tail('Winona')
 mycdll.add_at_head('Barry')
+print(mycdll)
+print(mycdll.get_by_index(4))
+for node in mycdll:
+    print('Iterator: {}'.format(node))
+myiter = mycdll.__iter__()
+for i in range(mycdll.size()):
+    print('Next: {}'.format(next(myiter)))
+print(mycdll)
+mycdll.delete('Eunice')
+print(mycdll)
+mycdll.add_at_index('Oliver', 4)
 print(mycdll)

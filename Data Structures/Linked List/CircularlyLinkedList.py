@@ -245,7 +245,7 @@ class CircularlyLinkedList:
         """
         if self.__current == self.__head and self.__index != 0:
             raise StopIteration
-        value = self.__current.get_data()
+        value = self.__current.get_value()
         self.__current = self.__current.get_next()
         self.__index += 1
         return value
