@@ -76,10 +76,12 @@ class RandomizedSkipList:
         """
         # Check to see if this is first node being added to skiplist
         if self.__header.next == self.__trailer:
+            print('First node being inserted')
             tmp = self.SkipNode(key)
             self.__header.next = tmp
             tmp.previous = self.__header
             tmp.next = self.__trailer
+            self.__trailer.previous = tmp
             top = tmp
             # If we are adding to the head of the list, 
             # a new SkipNode must be created and the
@@ -233,8 +235,8 @@ class RandomizedSkipList:
             self.next = next
 
 myskiplist = RandomizedSkipList()
-myskiplist.insert(2)
-myskiplist.insert(3)
-myskiplist.insert(4)
-myskiplist.insert(7)
+# myskiplist.insert(2)
+# myskiplist.insert(3)
+# myskiplist.insert(4)
+# myskiplist.insert(7)
 print(myskiplist)
