@@ -18,7 +18,16 @@ class TreeNode:
         recursive_dfs(root): Returns recursive depth-first search of binary tree
         bfs(root): Returns breadth-first traversal of binary tree O(n)
         contains(root, target): Checks whether tree contains the target iteratively
-        recursive_contains(root, target): Checks whether tree contains target recursively 
+        recursive_contains(root, target): Checks whether tree contains target recursively
+        is_leaf(): Checks whether the current node is a leaf/external node 
+        is_internal(): Checks whether the current node is an internal node
+        dfs_min_value_in_binary_tree(root): Calculates the minimum number in the binary tree through depth-first search
+        bfs_min_value_in_binary_tree(root): Calculates the minimum number in the binary tree through breadth-first search
+        recursive_min_value_in_binary_tree(root): Caluclates the minimum number in the binary tree recursively
+        dfs_max_value_in_binary_tree(root): Calculates the maximum number in the binary tree through depth-first search
+        bfs_max_value_in_binary_tree(root): Calculates the maximum number in the binary tree through breadth-first search
+        recursive_max_value_in_binary_tree(root): Caluclates the maximum number in the binary tree recursively
+        max_path_sum(root): Calculate the maxmimum path sum from the root to a leaf node
     """
     def __init__(self, data):
         """Initializes tree node by setting references to left and right and assigning data"""
@@ -77,13 +86,14 @@ class TreeNode:
                 if node.right:
                     q_next_level.append((node.right, index * 2 + 2))
             q = q_next_level
-        return width
+        return width    
 
     def height(self, root):
         """Method to compute height of binary tree"""
         # base case
         if root is None:
             return -1
+
         # Inductive step
         return max(self.height(root.left), self.height(root.right)) + 1
 
@@ -92,8 +102,23 @@ class TreeNode:
         # Base case
         if root is None:
             return 0
+
         # Inductive step
         return root.data + self.sum_values_in_binary_tree(root.left) + self.sum_values_in_binary_tree(root.right)
+
+    def iterative_sum_values_in_binary_tree(self, root):
+        """Method to return the sum of values in the binary tree iteratively"""
+        if root == None: 
+            return 0
+        total_sum, q = 0, [root]
+        while q:
+            current_node = q.pop(0)
+            total_sum += current_node.data
+            if current_node.left:
+                q.append(current_node.left)
+            if current_node.right:
+                q.append(current_node.right)
+        return total_sum
 
     def dfs(self, root):
         """Method to perform a depth-first traversal of the binary tree"""
@@ -116,8 +141,11 @@ class TreeNode:
 
     def recursive_dfs(self, root):
         """Method to perform a recursive depth-first search of the binary tree"""
+        # Base case
         if root is None:
             return []
+        
+        # Inductive step
         left_binary_tree = self.recursive_dfs(root.left)
         right_binary_tree = self.recursive_dfs(root.right)
         return [root.data] + left_binary_tree + right_binary_tree
@@ -153,11 +181,125 @@ class TreeNode:
     
     def recursive_contains(self, root, target):
         """Method to check if tree contains target recursively"""
+        # Base case
         if root is None:
             return False
         if root.data == target:
             return True
+        
+        # Inductive step
         return self.recursive_contains(root.left, target) or self.recursive_contains(root.right, target)
+
+    def is_leaf(self):
+        """Method to check is current node in tree is a leaf/external node"""
+        if self is None:
+            return False
+        if self.left is None and self.right is None:
+            return True
+        return False
+
+    def is_internal(self):
+        """Method to check if current node in tree is an internal node"""
+        if self is None:
+            return False
+        if self.left is not None or self.right is not None:
+            return True
+        return False
+
+    def dfs_min_value_in_binary_tree(self, root):
+        """Method to return the minimum value in the binary tree"""
+        if root is None:
+            return float('inf')
+        minimum_value, stack = float('inf'), [root]
+        while stack:
+            current_node = stack.pop()
+            minimum_value = min(minimum_value, current_node.data)
+
+            if current_node.right is not None:
+                stack.append(current_node.right)
+            if current_node.left is not None:
+                stack.append(current_node.left)
+        return minimum_value
+
+    def bfs_min_value_in_binary_tree(self, root):
+        """Method to return the minimum value in the binary tree"""
+        if root is None:
+            return float('inf')
+        minimum_value, queue = float('inf'), [root]
+        while queue:
+            current_node = queue.pop(0)
+            minimum_value = min(minimum_value, current_node.data)
+
+            if current_node.left is not None:
+                queue.append(current_node.left)
+            if current_node.right is not None:
+                queue.append(current_node.right)
+        return minimum_value
+    
+    def recursive_min_value_in_binary_tree(self, root):
+        """Method to compute the minimum value in the binary tree recursively"""
+        # Base case
+        if root is None:
+            return float('inf')
+
+        # Inductive step
+        min_left_tree = self.recursive_min_value_in_binary_tree(root.left)
+        min_right_tree = self.recursive_min_value_in_binary_tree(root.right)
+        return root.data if root.data < min_left_tree and root.data < min_right_tree else min(min_left_tree, min_right_tree)
+
+    def dfs_max_value_in_binary_tree(self, root):
+        """Method to return the maximum value in the binary tree"""
+        if root is None:
+            return float('-inf')
+        maximum_value, stack = float('-inf'), [root]
+        while stack:
+            current_node = stack.pop()
+            maximum_value = max(maximum_value, current_node.data)
+
+            if current_node.right is not None:
+                stack.append(current_node.right)
+            if current_node.left is not None:
+                stack.append(current_node.left)
+        return maximum_value
+
+    def bfs_max_value_in_binary_tree(self, root):
+        """Method to return the maximum value in the binary tree through bfs"""
+        if root is None:
+            return float('-inf')
+        maximum_value, q = float('-inf'), [root]
+        while q:
+            current_node = q.pop(0)
+            maximum_value = max(maximum_value, current_node.data)
+
+            if current_node.left is not None:
+                q.append(current_node.left)
+            if current_node.right is not None:
+                q.append(current_node.right)
+        return maximum_value
+    
+    def recursive_max_value_in_binary_tree(self, root):
+        """Method to compute the maximum value in the binary tree recursively"""
+        # Base case
+        if root is None:
+            return float('-inf')
+        
+        # Inductive step
+        max_left_tree = self.recursive_max_value_in_binary_tree(root.left)
+        max_right_tree = self.recursive_max_value_in_binary_tree(root.right)
+        return root.data if root.data > max_left_tree and root.data > max_right_tree else max(max_left_tree, max_right_tree)
+
+    def max_path_sum(self, root):
+        """Method to compute the max path sum in the binary tree from the root to a leaf node"""
+        # Base cases
+        if root is None:
+            return float('-inf')
+        if root.is_leaf():
+            return root.data
+        
+        # Inductive step
+        max_path_sum_left_tree = root.max_path_sum(root.left)
+        max_path_sum_right_tree = root.max_path_sum(root.right)
+        return max(root.data, root.data + max(max_path_sum_left_tree, max_path_sum_right_tree))
 
 root = TreeNode(1)
 root.left = TreeNode(3)
@@ -179,3 +321,14 @@ print("Check if tree contains target ({0}): {1}".format(3, root.contains(root, 3
 print("Check if tree contains target ({0}): {1}".format(100, root.contains(root, 100)))
 print("Check if tree contains target ({0}): {1}".format(100, root.recursive_contains(root, 100)))
 print("Check if tree contains target ({0}): {1}".format(3, root.contains(root, 3)))
+print("is_leaf(): {}".format(root.left.left.is_leaf()))
+print("is_internal(): {}".format(root.left.left.is_internal()))
+print("is_internal(): {}".format(root.is_internal()))
+print("Sum of values in binary tree (iterative): {}".format(root.iterative_sum_values_in_binary_tree(root)))
+print("Minimum value in binary tree (dfs): {}".format(root.dfs_min_value_in_binary_tree(root)))
+print("Minimum value in binary tree (bfs): {}".format(root.bfs_min_value_in_binary_tree(root)))
+print("Minimum value in binary tree (recursive): {}".format(root.recursive_min_value_in_binary_tree(root)))
+print("Maximum value in binary tree (dfs): {}".format(root.dfs_max_value_in_binary_tree(root)))
+print("Maximum value in binary tree (bfs): {}".format(root.bfs_max_value_in_binary_tree(root)))
+print("Maximum value in binary tree (recursive): {}".format(root.recursive_max_value_in_binary_tree(root)))
+print("Maximum path sum from root to leaf: {}".format(root.max_path_sum(root)))
