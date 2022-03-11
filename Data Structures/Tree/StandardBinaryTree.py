@@ -81,6 +81,15 @@ class TreeNode:
         # Inductive step
         return max(self.height(root.left), self.height(root.right)) + 1
 
+    def sum_values_in_binary_tree(self, root):
+        """Method to return the sum of values in the binary tree"""
+        # Base case
+        if root is None:
+            return 0
+        # Inductive step
+        return root.data + self.sum_values_in_binary_tree(root.left) + self.sum_values_in_binary_tree(root.right)
+
+
 root = TreeNode(1)
 root.left = TreeNode(3)
 root.right = TreeNode(2)
@@ -93,3 +102,4 @@ root.print_pre_order_traversal()
 print("**Post Order Traversal**")
 root.print_post_order_traversal()
 print("Height of binary tree: {}".format(root.height(root)))
+print("Sum of values in binary tree: {}".format(root.sum_values_in_binary_tree(root)))
