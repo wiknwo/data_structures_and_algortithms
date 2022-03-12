@@ -42,11 +42,11 @@ class MaxHeap:
         """Method to remove and return the root of the MaxHeap i.e. the maximum element"""
         if self.is_empty():
             raise ValueError('MaxHeap is empty!')            
-        minimum_element = self.__heap[0]
+        maximum_element = self.__heap[0]
         self.__heap[0] = self.__heap[len(self.__heap) - 1]
         del self.__heap[len(self.__heap) - 1]
         self.__downheap(0)
-        return minimum_element
+        return maximum_element
 
     def insert(self, element):
         """Method to insert data into a new node in the MaxHeap"""
@@ -93,15 +93,15 @@ class MaxHeap:
 
     def __str__(self):
         """Method to return string representation of minheap"""
-        minheapstr, left_child, right_child = '', None, None
+        maxheapstr, left_child, right_child = '', None, None
         for i in range(self.size() // 2):
             if 2 * i + 1 < self.size():
                 left_child = self.__heap[2 * i + 1]
             if 2 * i + 2 < self.size():
                 right_child = self.__heap[2 * i + 2]
-            minheapstr += "Parent: {} | Left child: {} | Right child: {}\n".format(self.__heap[i], left_child, right_child)
+            maxheapstr += "Parent: {} | Left child: {} | Right child: {}\n".format(self.__heap[i], left_child, right_child)
             left_child, right_child = None, None
-        return minheapstr
+        return maxheapstr
 
 maxheap = MaxHeap()
 maxheap.insert(5)
