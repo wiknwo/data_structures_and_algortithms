@@ -2,6 +2,12 @@
 """
     Program to solve N-Queens problem using more advanced
     recursion and backtracking
+
+    Given a value n, you need to create a chess grid of 
+    size n x n and put n queens in it such that no queens 
+    are in a mutual attacking position. A queen in a chess 
+    board, can move to any direction horizontally, vertically, 
+    and both ways diagonally.
 """
 def solve_n_queens(n):
     """Function to solve N-Queens problem"""
