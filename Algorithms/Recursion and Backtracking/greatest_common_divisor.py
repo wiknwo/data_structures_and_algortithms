@@ -1,7 +1,8 @@
 """
     Program to compute the euclidean algorithm also known as 
     the greates common divisor or GCD demonstrating basic
-    recursion.
+    recursion. It is also an example of a decrease-and-conquer
+    algorithm.
 
     GCD of two numbers is the largest number that divides both of them. 
     A simple way to find GCD is to factorize both numbers and multiply 
