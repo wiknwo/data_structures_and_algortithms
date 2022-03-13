@@ -91,6 +91,14 @@ class MaxHeap:
             self.__swap(node_index, 2 * node_index + 2) # Swap the right child with the current node since it is > current node
             self.__downheap(2 * node_index + 2)
 
+    def heapsort(self):
+        """Method to perform a heapsort of the nodes in the heap"""
+        copy_of_heap, sorted_list = self.__heap.copy(), []
+        while not self.is_empty():
+            sorted_list.append(self.poll())
+        self.__heap = copy_of_heap
+        return sorted_list
+        
     def __str__(self):
         """Method to return string representation of minheap"""
         maxheapstr, left_child, right_child = '', None, None
@@ -113,6 +121,8 @@ maxheap.insert(19)
 maxheap.insert(6)
 maxheap.insert(22)
 maxheap.insert(9)
+
+print("Sorted list: {}".format(maxheap.heapsort()))
 
 while not maxheap.is_empty():
     print(maxheap)

@@ -1,7 +1,9 @@
 """
     Program to compute the nth Fibonacci number demonstrating
-    basic recursion. We will revisit this problem in dynamic
-    programming (memoization) to make an optimal solution.
+    basic recursion. This is a primitive recursive function
+    meaning that it is able to be programmed iteratively.
+    We will revisit this problem in dynamic programming (memoization) 
+    to make an optimal solution.
 """
 def fibonacci(number):
     # Base case / stopping condition
