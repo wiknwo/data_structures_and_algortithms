@@ -28,6 +28,7 @@ class TreeNode:
         bfs_max_value_in_binary_tree(root): Calculates the maximum number in the binary tree through breadth-first search
         recursive_max_value_in_binary_tree(root): Caluclates the maximum number in the binary tree recursively
         max_path_sum(root): Calculate the maxmimum path sum from the root to a leaf node
+        check_bst(root): Returns boolean determining if the binary tree is a binary search tree
     """
     def __init__(self, data):
         """Initializes tree node by setting references to left and right and assigning data"""
@@ -301,6 +302,29 @@ class TreeNode:
         max_path_sum_right_tree = root.max_path_sum(root.right)
         return max(root.data, root.data + max(max_path_sum_left_tree, max_path_sum_right_tree))
 
+    def check_bst(self, root):
+        """
+        Method to check if given binary tree is a valid binary search tree.
+
+        All values in subtree left of root must be strictly less than the root
+        All values in subtree right of root must be strictly greater than the root
+        All subtrees must also be binary search trees
+        """
+        return self.__check_bst_helper(root, float('-inf'), float('inf'))
+
+    def __check_bst_helper(self, root, min_value, max_value):
+        """
+        Helper method to check if tree is a binary search tree.
+        """
+        # Base case / stopping condition
+        if root is None:
+            return True
+        # Base case / stopping condition and inductive step: Do some work to shrink the problem space
+        elif self.__check_bst_helper(root.left, min_value, root.data) and self.__check_bst_helper(root.right, root.data, max_value):
+            return True
+        else:
+            return False
+
 root = TreeNode(1)
 root.left = TreeNode(3)
 root.right = TreeNode(2)
@@ -332,3 +356,4 @@ print("Maximum value in binary tree (dfs): {}".format(root.dfs_max_value_in_bina
 print("Maximum value in binary tree (bfs): {}".format(root.bfs_max_value_in_binary_tree(root)))
 print("Maximum value in binary tree (recursive): {}".format(root.recursive_max_value_in_binary_tree(root)))
 print("Maximum path sum from root to leaf: {}".format(root.max_path_sum(root)))
+print("Check if binary tree is binary search tree: {}".format(root.check_bst(root)))
