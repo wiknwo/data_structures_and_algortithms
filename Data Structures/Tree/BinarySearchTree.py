@@ -47,6 +47,7 @@ class BinarySearchTree:
         remove(data): Returns boolean indicating if data was sucessfully removed from BST
         print_in_order_traversal(): Prints the BST in order which happens to be sorted in ascending order
         check_bst(): Checks if binary tree is a BST
+        range_sum_bst(min_bound, max_bound): Sums all nodes in BST which fall within given range
     """
     def __init__(self):
         """Initializes Binary Search Tree with root"""
@@ -231,6 +232,53 @@ class BinarySearchTree:
         else:
             return False
 
+    def range_sum_of_bst(self, min_bound, max_bound):
+        """
+        Method to return sum of all nodes in BST which fall
+        into range [min_bound, max_bound]. We will do this 
+        by performing a BFS
+        """
+        runningsum = 0
+
+        if self.is_empty():
+            return runningsum
+        
+        q = [self.__root]
+        while q:
+            current_node = q.pop(0)
+            if current_node.data >= min_bound and current_node.data <= max_bound:
+                runningsum += current_node.data
+            # Check if this nodes left child also falls within range
+            # Meaning node in tree whose value to left of node is 
+            # smaller than current value but still within range
+            if current_node.left is not None and current_node.data > min_bound:
+                q.append(current_node.left)
+            # Check if this nodes right child also falls within range
+            # Meaning node in tree whose value to right of node is 
+            # greater than current value but still within range
+            if current_node.right is not None and current_node.data < max_bound:
+                q.append(current_node.right)
+        return runningsum
+
+    def range_sum_of_bst_recursive(self, min_bound, max_bound):
+        """
+        Method to return sum of all nodes in BST which fall
+        into range [min_bound, max_bound]. We will do this 
+        by using recursion
+        """
+        return self.__range_sum_of_bst_recursive_helper(self.__root, min_bound, max_bound)
+    
+    def __range_sum_of_bst_recursive_helper(self, node, min_bound, max_bound):
+        """Helper method to compute range sum of BST recursively"""
+        if node is None:
+            return 0
+        elif node.data < min_bound :
+            return self.__range_sum_of_bst_recursive_helper(node.right, min_bound, max_bound)
+        elif node.data > max_bound:
+            return self.__range_sum_of_bst_recursive_helper(node.left, min_bound, max_bound)
+        else:
+            return node.data + self.__range_sum_of_bst_recursive_helper(node.left, min_bound, max_bound) + self.__range_sum_of_bst_recursive_helper(node.right, min_bound, max_bound)
+
     def __str__(self):
         """Method to return string representation of BST"""
         if self.is_empty():
@@ -265,3 +313,5 @@ print(mybst)
 print("Size of Binary search tree: {}".format(mybst.size()))
 print("This BST is empty: {}".format(mybst.is_empty()))
 print("This BST maintains the ordering property: {}".format(mybst.check_bst()))
+print("The range sum of BST with range [{}, {}]: {}".format(0, 100, mybst.range_sum_of_bst(0, 100)))
+print("The range sum of BST with range [{}, {}] iterative == recursive: {}".format(0, 100, mybst.range_sum_of_bst(0, 100) == mybst.range_sum_of_bst_recursive(0, 100)))
