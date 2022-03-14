@@ -48,6 +48,7 @@ class BinarySearchTree:
         print_in_order_traversal(): Prints the BST in order which happens to be sorted in ascending order
         check_bst(): Checks if binary tree is a BST
         range_sum_bst(min_bound, max_bound): Sums all nodes in BST which fall within given range
+        range_sum_bst_recursive(min_bound, max_bound): Sums all nodes in BST which fall within given range
     """
     def __init__(self):
         """Initializes Binary Search Tree with root"""
