@@ -50,7 +50,7 @@ if __name__ == '__main__':
     # sequence, we get the wrong truth values. An overflow
     # of sorts perhaps.
 
-    # print(can_sum(7, [2, 3])) # True
+    print(can_sum(7, [2, 3])) # True
     # print(can_sum(7, [5, 3, 4, 7])) # True
     # print(can_sum(7, [2, 4])) # False
     # print(can_sum(8, [2, 3, 5])) # True
