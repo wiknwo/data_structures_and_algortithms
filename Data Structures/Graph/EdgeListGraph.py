@@ -18,6 +18,8 @@ graph contains a particular edge, we have to search through
 the edge list. If the edges appear in the edge list in no 
 particular order, that's a linear search through |E| edges.
 
+|V| = n, |E| = m
+
 ************ ADVANTAGES ************
 - Space-efficient for sparse graphs
 - Iterating over edges is efficient
@@ -111,9 +113,16 @@ class EdgeListGraph:
             raise ValueError('Vertex not in graph!')
         else:
             # Remove all edges associated with v
+            edges_to_remove = []
+
             for s, d, w in self.__edges:
-                if s == v:
-                    self.removeEdge(s, d, w)
+                if s == v or d == v:
+                    edges_to_remove.append((s, d, w))
+
+            for s, d, w in edges_to_remove:
+                self.removeEdge(s, d, w)
+
+            edges_to_remove.clear()
             # Remove v from graph 
             self.__vertices.remove(v)
 
@@ -126,7 +135,7 @@ class EdgeListGraph:
         return (s, d, w) in self.__edges
 
     def adjacentVertices(self, v):
-        """Method to return an iterable of all adjacent vertices to v in graph"""
+        """Method to return a list of all adjacent vertices to v in graph"""
         # Check if vertex is in graph
         if v not in self.__vertices:
             raise ValueError('Vertex not in graph!')
@@ -147,6 +156,14 @@ class EdgeListGraph:
         else: 
             return sum(1 for e in self.__edges if v in e)
 
+    def n(self):
+        """Method to return number of vertices in graph"""
+        return len(self.__vertices)
+
+    def m(self):
+        """Method to return number of edges in graph"""
+        return len(self.__edges)
+
 if __name__ == '__main__':
     simplegraph = EdgeListGraph([1, 2, 3], {(1, 2, 0), (2, 3, 0)})
     
@@ -160,5 +177,36 @@ if __name__ == '__main__':
 
     # Print neighbours or adjacent vertices of vertex 2
     print("Neighoburs of {}: {}".format(2, simplegraph.adjacentVertices(2)))
+
+    # Print number of vertices and edges
+    print("Number of vertices in graph: {}".format(simplegraph.n()))
+    print("Number of edges in graph: {}".format(simplegraph.m()))
+
+    # Remove an edge from the graph
+    print("Remove edge: ({}, {}, {}) to graph".format(1, 2, 0))
+    simplegraph.removeEdge(1, 2)
+    print("Number of vertices in graph: {}".format(simplegraph.n()))
+    print("Number of edges in graph: {}".format(simplegraph.m()))
+
+    # Remove an edge from the graph that doesn't exist
+    try:
+        print("Remove edge: ({}, {}, {}) to graph".format(1, 3, 0))
+        simplegraph.removeEdge(1, 3)
+        print("Number of vertices in graph: {}".format(simplegraph.n()))
+        print("Number of edges in graph: {}".format(simplegraph.m()))
+    except:
+        print("Edge does not exist in graph")
+    
+    # Add an edge to the graph
+    print("Add edge: ({}, {}, {}) to graph".format(1, 2, 0))
+    simplegraph.addEdge(1, 2)
+    print("Number of vertices in graph: {}".format(simplegraph.n()))
+    print("Number of edges in graph: {}".format(simplegraph.m()))
+
+    # Remove a vertex from the graph
+    print("Remove vertex: {} from graph".format(2))
+    simplegraph.removeVertex(2)
+    print("Number of vertices in graph: {}".format(simplegraph.n()))
+    print("Number of edges in graph: {}".format(simplegraph.m()))
 
     
