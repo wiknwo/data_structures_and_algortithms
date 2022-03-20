@@ -164,6 +164,21 @@ class EdgeListGraph:
         """Method to return number of edges in graph"""
         return len(self.__edges)
 
+    def weightOfGraph(self):
+        """Method to return the weight of the graph defined as the sum of the weights of all its edges"""
+        return sum(w for s, d, w in self.__edges)
+
+    def areAdjacentVertices(self, u, v):
+        """Method that returns boolean indictaing whether vertices u and v are adjacent in the graph"""
+        return u in self.adjacentVertices(v) and v in self.adjacentVertices(v)
+    
+    def incidentEdges(self, v):
+        """Method to return list of edges incident to v in graph"""
+        if v not in self.__vertices:
+            raise ValueError('Vertex not in graph!')
+        else:
+            return [e for e in self.__edges if v in e]
+
 if __name__ == '__main__':
     simplegraph = EdgeListGraph([1, 2, 3], {(1, 2, 0), (2, 3, 0)})
     
@@ -209,4 +224,15 @@ if __name__ == '__main__':
     print("Number of vertices in graph: {}".format(simplegraph.n()))
     print("Number of edges in graph: {}".format(simplegraph.m()))
 
-    
+    # Display the weight of the graph
+    print("Weight of graph: {}".format(simplegraph.weightOfGraph()))
+
+    # Print whether the specificied vertices are adjacent
+    print("Vertices {} and {} are adjacent in graph: {}".format(1, 3, simplegraph.areAdjacentVertices(1, 3)))
+
+    # Print the edges incident to specified vertex
+    print("Edges incident to vertex {}: {}".format(1, simplegraph.incidentEdges(1)))
+
+    # Print definition of our simple graph
+    print("Vertices of G: {}".format(list(simplegraph.vertices())))
+    print("Edges of G: {}".format(list(simplegraph.edges())))
