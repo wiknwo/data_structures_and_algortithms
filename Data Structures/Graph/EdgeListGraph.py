@@ -179,12 +179,18 @@ class EdgeListGraph:
         else:
             return [e for e in self.__edges if v in e]
 
+    def getDegreeSequence(self):
+        return sorted([self.degree(v) for v in self.__vertices])
+
 if __name__ == '__main__':
     simplegraph = EdgeListGraph([1, 2, 3], {(1, 2, 0), (2, 3, 0)})
     
     # Print definition of our simple graph
     print("Vertices of G: {}".format(list(simplegraph.vertices())))
     print("Edges of G: {}".format(list(simplegraph.edges())))
+
+    # Print the degree sequence of the graph
+    print("Degree sequence of graph: {}".format(simplegraph.getDegreeSequence()))
 
     # Print the degrees of our vertices
     for i in range(3):
@@ -236,3 +242,6 @@ if __name__ == '__main__':
     # Print definition of our simple graph
     print("Vertices of G: {}".format(list(simplegraph.vertices())))
     print("Edges of G: {}".format(list(simplegraph.edges())))
+
+    # Print the degree sequence of the graph
+    print("Degree sequence of graph: {}".format(simplegraph.getDegreeSequence()))
