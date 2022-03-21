@@ -1,4 +1,6 @@
 """
+Simple Graph: A graph with no self loops or parallel edges.
+
 In an edge list, we maintain an unordered list of all 
 edges. This minimally suffices, but there is no efficient 
 way to locate a particular edge (u,v), or the set of all 
@@ -55,15 +57,10 @@ https://www.khanacademy.org/computing/computer-science/algorithms/graph-represen
 """
 class EdgeListGraph:
     """Class representing simple undirected weighted/unweighted graphs using edge list"""
-    def __init__(self, v = (), e = ()):
+    def __init__(self):
         """Initialize vertices and edges objects"""
         self.__vertices = set()
         self.__edges = set()
-
-        for vertex in v:
-            self.addVertex(vertex)
-        for s, d, w in e:
-            self.addEdge(s, d, w)
 
     def vertices(self):
         """Method to return all the vertices in the graph as an iterable"""
@@ -90,26 +87,34 @@ class EdgeListGraph:
         # s and d if either of these vertices is non-existant?
         # These are good questions to ask and lead to smarter
         # and more resilient software.
-        if s not in self.__vertices or d not in self.__vertices:
-            raise ValueError('One or both vertices are not in the graph!')
+        if not self.hasVertex(s):
+            raise ValueError('Source vertex not in the graph!')
+        if not self.hasVertex(d):
+            raise ValueError('Destination vertex not in the graph!')
+        if self.hasEdge(s, d, w) or self.hasEdge(d, s, w):
+            raise ValueError('No parallel edges or self loops in graph!')
         else:
             self.__edges.add((s, d, w))
 
     def removeEdge(self, s, d, w = 0):
         """Method to remove edge between two vertices in graph"""
-        # Check if both vertices are in graph, we should be
-        # smart about how we handle this error. What is the
-        # expected behaviour of this piece of software on the
+        # Check if both vertices are in graph and if the edge exists 
+        # in the graph, we should be smart about how we handle these errors. 
+        # What is the expected behaviour of this piece of software on the
         # user's end? 
-        if (s, d, w) not in self.__edges:
-            raise ValueError('One or both of the vertices are not in the graph and the weight maybe incorrect!')
-        else:
+        if not self.hasVertex(s):
+            raise ValueError('Source vertex not in the graph!')
+        if not self.hasVertex(d):
+            raise ValueError('Destination vertex not in the graph!')
+        elif self.hasEdge(s, d, w):
             self.__edges.remove((s, d, w))
-
+        elif self.hasEdge(d, s, w):
+            self.__edges.remove((d, s, w))
+            
     def removeVertex(self, v):
         """Method to remove vertex and its associated edges from graph"""
         # Check if vertex is in the graph
-        if v not in self.__vertices:
+        if not self.hasVertex(v):
             raise ValueError('Vertex not in graph!')
         else:
             # Remove all edges associated with v
@@ -137,7 +142,7 @@ class EdgeListGraph:
     def adjacentVertices(self, v):
         """Method to return a list of all adjacent vertices to v in graph"""
         # Check if vertex is in graph
-        if v not in self.__vertices:
+        if not self.hasVertex(v):
             raise ValueError('Vertex not in graph!')
         else:
             neighbours = []
@@ -151,7 +156,7 @@ class EdgeListGraph:
     def degree(self, v):
         """Method to return degree of vertex"""
         # Check if vertex is in graph
-        if v not in self.__vertices:
+        if not self.hasVertex(v):
             raise ValueError('Vertex not in graph!')
         else: 
             return sum(1 for e in self.__edges if v in e)
@@ -174,7 +179,7 @@ class EdgeListGraph:
     
     def incidentEdges(self, v):
         """Method to return list of edges incident to v in graph"""
-        if v not in self.__vertices:
+        if not self.hasVertex(v):
             raise ValueError('Vertex not in graph!')
         else:
             return [e for e in self.__edges if v in e]
@@ -183,7 +188,12 @@ class EdgeListGraph:
         return sorted([self.degree(v) for v in self.__vertices])
 
 if __name__ == '__main__':
-    simplegraph = EdgeListGraph([1, 2, 3], {(1, 2, 0), (2, 3, 0)})
+    simplegraph = EdgeListGraph()
+    simplegraph.addVertex(1)
+    simplegraph.addVertex(2)
+    simplegraph.addVertex(3)
+    simplegraph.addEdge(1, 2)
+    simplegraph.addEdge(2, 3)
     
     # Print definition of our simple graph
     print("Vertices of G: {}".format(list(simplegraph.vertices())))
@@ -191,6 +201,9 @@ if __name__ == '__main__':
 
     # Print the degree sequence of the graph
     print("Degree sequence of graph: {}".format(simplegraph.getDegreeSequence()))
+
+    # Print the edges incident to specified vertex
+    print("Edges incident to vertex {}: {}".format(1, simplegraph.incidentEdges(1)))
 
     # Print the degrees of our vertices
     for i in range(3):
