@@ -257,6 +257,23 @@ class EdgeListGraph:
                 if not visited[neighbour]:
                     stack.append(neighbour)
 
+    def depthFirstPrintRecursive(self):
+        """Method to print vertices in dfs manner recursively"""
+        visited = {}
+
+        for v in self.__vertices:
+            visited[v] = False
+        for v in self.__vertices:
+            if not visited[v]:
+                self.__depthFirstPrintRecursive(v, visited)
+    
+    def __depthFirstPrintRecursive(self, source, visited):
+        """Helper method to print vertices in graph in dfs manner recursively"""
+        print(source)
+        visited[source] = True
+        for neighbour in self.adjacentVertices(source):
+            if not visited[neighbour]:
+                self.__depthFirstPrintRecursive(neighbour, visited)
 
 if __name__ == '__main__':
     simplegraph = EdgeListGraph()
@@ -332,3 +349,35 @@ if __name__ == '__main__':
 
     # Print the degree sequence of the graph
     print("Degree sequence of graph: {}".format(simplegraph.getDegreeSequence()))
+
+    # Linebreak in CMD
+    print("********NEW GRAPH********")
+
+    # Create a second graph
+    simplegraph2 = EdgeListGraph()
+    simplegraph2.addVertex('a')
+    simplegraph2.addVertex('b')
+    simplegraph2.addVertex('c')
+    simplegraph2.addVertex('d')
+    simplegraph2.addVertex('e')
+    simplegraph2.addVertex('f')
+    simplegraph2.addEdge('a', 'b')
+    simplegraph2.addEdge('a', 'c')
+    simplegraph2.addEdge('b', 'd')
+    simplegraph2.addEdge('c', 'e')
+    simplegraph2.addEdge('d', 'f')
+    
+    # Print the definition of the second graph
+    print("Vertices of G: {}".format(list(simplegraph2.vertices())))
+    print("Edges of G: {}".format(list(simplegraph2.edges())))
+
+    # Print the degree sequence of the graph
+    print("Degree sequence of graph: {}".format(simplegraph2.getDegreeSequence()))
+
+    # Depth-First Print
+    print("Depth-First Print")
+    simplegraph2.depthFirstPrint()
+
+    # Depth-First Print Recursive
+    print("Depth-First Print Recursive")
+    simplegraph2.depthFirstPrintRecursive()
