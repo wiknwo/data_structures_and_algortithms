@@ -162,11 +162,11 @@ class EdgeListGraph:
             return sum(1 for e in self.__edges if v in e)
 
     def n(self):
-        """Method to return number of vertices in graph"""
+        """Method to return number of vertices (order) in graph"""
         return len(self.__vertices)
 
     def m(self):
-        """Method to return number of edges in graph"""
+        """Method to return number of edges (size) in graph"""
         return len(self.__edges)
 
     def weightOfGraph(self):
@@ -184,8 +184,79 @@ class EdgeListGraph:
         else:
             return [e for e in self.__edges if v in e]
 
+    def oppositeVertexOnEdge(self, v, e):
+        """Method to return the opposite vertex on the given edge in the graph"""
+        return e[1] if v == e[0] else e[0]
+
     def getDegreeSequence(self):
+        """Method to return the degree sequence of the graph in non-decreasing order"""
         return sorted([self.degree(v) for v in self.__vertices])
+
+    def dfs(self):
+        """
+        Method to perform Depth-First Traversal of entire graph:
+        - Visits all the vertices and edges of the graph
+        - Determines whether the graph is connected
+        - Computes the connected components of the graph
+        - Computes a spanning forest of the graph
+
+        Applications of dfs:
+        - Find and report a path between two given vertices
+        - Detect and find a cycle in the graph
+        - Compute a graph's Minimum Spanning Tree (MST)
+        - Find strongly connected components 
+        - Topologically sort the vertices of a graph
+        - Find bridges/cut-edges/isthmus/cut-arc/articulation points of a graph
+        - Find augmenting paths in a flow network
+        - Generate mazes
+
+        This method ouputs a labelling of the edges of the 
+        graph as discovery and back edges. 
+        """
+        vertexLabels, edgeLabels = {}, {}
+
+        for u in self.__vertices:
+            vertexLabels[u] = 'UNEXPLORED'
+        for e in self.__edges:
+            edgeLabels[e] = 'UNEXPLORED'
+        for v in self.__vertices:
+            if vertexLabels[v] == 'UNEXPLORED':
+                self.__dfs(v, vertexLabels, edgeLabels)
+
+    def __dfs(self, vertex, vLabels, eLabels):
+        """Method to perform depth-first search starting from a given node in graph"""
+        vLabels[vertex] = 'VISITED'
+        for e in self.incidentEdges(vertex):
+            if eLabels[e] == 'UNEXPLORED':
+                u = self.oppositeVertexOnEdge(vertex, e)
+                if vLabels[u] == 'UNEXPLORED':
+                    eLabels[e] = 'DISCOVERY'
+                    self.__dfs(u, vLabels, eLabels)
+                else:
+                    eLabels[e] = 'BACK'
+
+    def depthFirstPrint(self):
+        """Method to print vertices of graph in dfs manner"""
+        visited = {}
+
+        for v in self.__vertices:
+            visited[v] = False
+        for v in self.__vertices:
+            if not visited[v]:
+                self.__depthFirstPrint(v, visited)
+    
+    def __depthFirstPrint(self, source, visited):
+        """Helper method to print vertices of graph in dfs manner"""
+        stack = [source]
+
+        while stack:
+            current_vertex = stack.pop()
+            visited[current_vertex] = True
+            print(current_vertex)
+            for neighbour in self.adjacentVertices(current_vertex):
+                if not visited[neighbour]:
+                    stack.append(neighbour)
+
 
 if __name__ == '__main__':
     simplegraph = EdgeListGraph()
@@ -194,6 +265,9 @@ if __name__ == '__main__':
     simplegraph.addVertex(3)
     simplegraph.addEdge(1, 2)
     simplegraph.addEdge(2, 3)
+
+    # Depth-First Print
+    simplegraph.depthFirstPrint()
     
     # Print definition of our simple graph
     print("Vertices of G: {}".format(list(simplegraph.vertices())))
