@@ -275,6 +275,27 @@ class EdgeListGraph:
             if not visited[neighbour]:
                 self.__depthFirstPrintRecursive(neighbour, visited)
 
+    def breadthFirstPrint(self):
+        """Method to print vertices of graph in bfs manner"""
+        visited = {}
+
+        for v in self.__vertices:
+            visited[v] = False
+        for v in self.__vertices:
+            if not visited[v]:
+                self.__breadthFirstPrint(v, visited)
+
+    def __breadthFirstPrint(self, source, visited):
+        """Helper method to print vertices of graph in bfs manner"""
+        q = [source]
+        while q:
+            current_vertex = q.pop(0)
+            visited[current_vertex] = True
+            print(current_vertex)
+            for neighbour in self.adjacentVertices(current_vertex):
+                if not visited[neighbour]:
+                    q.append(neighbour)
+
 if __name__ == '__main__':
     simplegraph = EdgeListGraph()
     simplegraph.addVertex(1)
@@ -284,6 +305,7 @@ if __name__ == '__main__':
     simplegraph.addEdge(2, 3)
 
     # Depth-First Print
+    print("Depth-First Print")
     simplegraph.depthFirstPrint()
     
     # Print definition of our simple graph
@@ -381,3 +403,7 @@ if __name__ == '__main__':
     # Depth-First Print Recursive
     print("Depth-First Print Recursive")
     simplegraph2.depthFirstPrintRecursive()
+
+    # Depth-First Print from Vertex
+    print("Breadth-First Print")
+    simplegraph2.breadthFirstPrint()
