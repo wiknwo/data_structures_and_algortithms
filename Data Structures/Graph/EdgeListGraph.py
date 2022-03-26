@@ -194,7 +194,31 @@ class EdgeListGraph:
 
     def dfs(self):
         """
-        Method to perform Depth-First Traversal of entire graph:
+        Method to perform Depth-First Traversal of entire graph.
+        Depth-first search (DFS) is an algorithm for traversing 
+        or searching tree or graph data structures. The algorithm 
+        starts at the root node (selecting some arbitrary node as 
+        the root node in the case of a graph) and explores as far 
+        as possible along each branch before backtracking. A version 
+        of depth-first search was investigated in the 19th century by 
+        French mathematician Charles Pierre Trémaux as a strategy for 
+        solving mazes. It is called DFS because it starts from the 
+        root and follows each path to its greatest depth node (leaf/dead end)
+        before backtracking and moving to the next node. A stack is used
+        to store the nodes on the path from root node to the current
+        node. In recusive version, the stack is implicit (call stack) 
+        DFS works by searching deeper before it searches wider.
+
+        Steps to perform DFS:
+        1. Choose the initial vertex to visit and start exploring it
+        2. Find the adjacent vertices to the initial vertex
+        3. Visit any one of the adjacent vertices, suspend the exploration
+        of the initial vertex by placing it on the stack and start exploring 
+        its neighbor
+        4. Repeat this process until the entire graph is traversed.
+
+        The properties of a depth-first traversal of a graph are 
+        as follows:
         - Visits all the vertices and edges of the graph
         - Determines whether the graph is connected
         - Computes the connected components of the graph
@@ -205,10 +229,12 @@ class EdgeListGraph:
         - Detect and find a cycle in the graph
         - Compute a graph's Minimum Spanning Tree (MST)
         - Find strongly connected components 
-        - Topologically sort the vertices of a graph
+        - Topologically sort the vertices of a digraph/DAG
         - Find bridges/cut-edges/isthmus/cut-arc/articulation points of a graph
         - Find augmenting paths in a flow network
         - Generate mazes
+        - Solving puzzles with only one solution, such as mazes
+        - Planarity testing
 
         This method ouputs a labelling of the edges of the 
         graph as discovery and back edges. 
@@ -226,6 +252,7 @@ class EdgeListGraph:
     def __dfs(self, vertex, vLabels, eLabels):
         """Method to perform depth-first search starting from a given node in graph"""
         vLabels[vertex] = 'VISITED'
+        print(vertex)
         for e in self.incidentEdges(vertex):
             if eLabels[e] == 'UNEXPLORED':
                 u = self.oppositeVertexOnEdge(vertex, e)
@@ -275,6 +302,69 @@ class EdgeListGraph:
             if not visited[neighbour]:
                 self.__depthFirstPrintRecursive(neighbour, visited)
 
+    def bfs(self):
+        """
+        Method to perform Breadth-First Search traversal of 
+        entire graph. BFS and its application in finding 
+        connected components of graphs were invented in 1945 
+        by Konrad Zuse, in his (rejected) Ph.D. thesis on the 
+        Plankalkül programming language, but this was not published 
+        until 1972. It was reinvented in 1959 by Edward F. Moore, 
+        who used it to find the shortest path out of a maze, and 
+        later developed by C. Y. Lee into a wire routing algorithm 
+        (published 1961).
+
+        Steps to perform BFS:
+        1. Choose an initial vertex to start the search and
+        enqueue it.
+        2. Dequeue a vertex and start exploring it
+            a. Look at the neighbours of the vertex, mark 
+            them as visited and enqueue them for 
+            exploration
+        3. Repeat step 2 until entire graph is traversed.
+
+        The properties of a breadth-first traversal of a graph are 
+        as follows:
+        - Visits all the vertices and edges of the graph
+        - Determines whether the graph is connected
+        - Computes the connected components of the graph
+        - Computes a spanning forest of the graph
+
+        Applications of bfs:
+        - Find and report a path with the minimum number of edges between two given vertices i.e.
+        find the shortest path in an unweigthed graph
+        - Find a simple cycle, if there is one
+        - Copying garbage collection, Cheney's algorithm
+        - Construction of the failure function of the Aho-Corasick pattern matcher.
+        - Testing bipartiteness of a graph.
+        """
+        vertexLabels, edgeLabels = {}, {}
+
+        for u in self.__vertices:
+            vertexLabels[u] = 'UNEXPLORED'
+        for e in self.__edges:
+            edgeLabels[e] = 'UNEXPLORED'
+        for v in self.__vertices:
+            if vertexLabels[v] == 'UNEXPLORED':
+                self.__bfs(v, vertexLabels, edgeLabels)
+    
+    def __bfs(self, vertex, vLabels, eLabels):
+        """Method to perform breadth-first search starting from a given node in graph"""
+        vLabels[vertex] = 'VISITED'
+        q = [vertex]
+        while q:
+            current = q.pop(0)
+            print(current)
+            for e in self.incidentEdges(current):
+                if eLabels[e] == 'UNEXPLORED':
+                    u = self.oppositeVertexOnEdge(current, e)
+                    if vLabels[u] == 'UNEXPLORED':
+                        eLabels[e] = 'DISCOVERY'
+                        vLabels[u] = 'VISITED'
+                        q.append(u)
+                    else:
+                        eLabels[e] = 'CROSS'
+
     def breadthFirstPrint(self):
         """Method to print vertices of graph in bfs manner"""
         visited = {}
@@ -295,6 +385,73 @@ class EdgeListGraph:
             for neighbour in self.adjacentVertices(current_vertex):
                 if not visited[neighbour]:
                     q.append(neighbour)
+
+    def isConnected(self):
+        """
+        Method to determine if graph is connected using DFS.
+        In an undirected graph G, a connected graph is graph 
+        that is connected in the sense of a topological space, 
+        i.e., there is a path from any point to any other point 
+        in the graph. A graph that is not connected is said to 
+        be disconnected. A graph is said to be connected if 
+        every pair of vertices in the graph is connected. 
+        This means that there is a path between every pair 
+        of vertices. An undirected graph that is not 
+        connected is called disconnected. 
+        """
+        visited = {}
+
+        for v in self.__vertices:
+            visited[v] = False
+
+        stack = [next(iter(self.__vertices))] # Some logic to retrieve an element from a set without removing it
+
+        while stack:
+            current_vertex = stack.pop()
+            visited[current_vertex] = True
+            for neighbour in self.adjacentVertices(current_vertex):
+                if not visited[neighbour]:
+                    stack.append(neighbour)
+
+        return all(visited.values())
+
+    def countConnectedComponents(self):
+        """
+        Method to count the number of connected components in the graph
+        using DFS. In graph theory, a component of an undirected graph is 
+        a connected subgraph that is not part of any larger connected subgraph. 
+        The components of any graph partition its vertices into disjoint sets, 
+        and are the induced subgraphs of those sets. A graph that is itself 
+        connected has exactly one component, consisting of the whole graph. 
+        Components are sometimes called connected components. Additional
+        examples include the following special cases:
+
+        - Empty graph: In an empty graph, each vertex forms a component 
+        with one vertex and zero edges. More generally, a component of 
+        this type is formed for every isolated vertex in any graph.
+
+        - Connected graph: In a connected graph, there is exactly one component, 
+        the whole graph.
+
+        - Forest: In a forest, every component is a tree.
+
+        - Cluster graph: In a cluster graph, every component is a maximal clique. 
+        These graphs may be produced as the transitive closures of arbitrary undirected graphs, 
+        for which finding the transitive closure is an equivalent formulation of identifying 
+        the connected components.
+        """
+        vertexLabels, edgeLabels, count = {}, {}, 0
+
+        for v in self.__vertices:
+            vertexLabels[v] = 'UNEXPLORED'
+        for e in self.__edges:
+            edgeLabels[e] = 'UNEXPLORED'
+        for v in self.__vertices:
+            if vertexLabels[v] == 'UNEXPLORED':
+                self.__dfs(v, vertexLabels, edgeLabels)
+                count += 1
+        return count
+
 
 if __name__ == '__main__':
     simplegraph = EdgeListGraph()
@@ -407,3 +564,26 @@ if __name__ == '__main__':
     # Depth-First Print from Vertex
     print("Breadth-First Print")
     simplegraph2.breadthFirstPrint()
+
+    # Depth-First Search
+    print("Depth-First Search (DFS)")
+    simplegraph2.dfs()
+
+    # Breadth-First Search
+    print("Breadth-First Search (BFS)")
+    simplegraph2.bfs()
+
+    # Check if graph is connected
+    print("Graph is connected: {}".format(simplegraph2.isConnected()))
+
+    # Count connected components
+    print("Connected components count of graph: {}".format(simplegraph2.countConnectedComponents()))
+
+    # Remove edge
+    simplegraph2.removeEdge('e', 'c')
+
+    # Check if graph is connected
+    print("Graph is connected: {}".format(simplegraph2.isConnected()))
+
+    # Count connected components
+    print("Connected components count of graph: {}".format(simplegraph2.countConnectedComponents()))
