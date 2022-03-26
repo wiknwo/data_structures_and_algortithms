@@ -159,7 +159,7 @@ class EdgeListGraph:
         if not self.hasVertex(v):
             raise ValueError('Vertex not in graph!')
         else: 
-            return sum(1 for e in self.__edges if v in e)
+            return sum(1 for e in self.__edges if v == e[0] or v == e[1])
 
     def n(self):
         """Method to return number of vertices (order) in graph"""
@@ -452,6 +452,98 @@ class EdgeListGraph:
                 count += 1
         return count
 
+    def findPathDFS(self, source, destination):
+        """
+        Method to find path from source to desination if it 
+        exists in graph using DFS. 
+        
+        Walk: A walk in a graph is an alternating sequence of 
+        vertices and edges. The length of a walk is the number
+        of edges. 
+
+        Trail: A trail is a walk with no repeated edges but a
+        vertex can be repeated.
+
+        Path: A path is a walk with no repeated vertices. A path
+        is always a trail since to repeat an edge you must repeat
+        at least one vertex.
+        """
+        vertexLabels, edgeLabels = {}, {}
+        for v in self.__vertices:
+            vertexLabels[v] = 'UNEXPLORED'
+        for e in self.__edges:
+            edgeLabels[e] = 'UNEXPLORED'
+        return self.__findPathDFS(source, destination, vertexLabels, edgeLabels)
+
+    def __findPathDFS(self, source, destination, vertexLabels, edgeLabels, stack = []):
+        """Helper method to find path from source to destination if it exists in graph using DFS"""
+        vertexLabels[source] = 'VISITED' # Mark vertex as visited
+        stack.append(source) # Push vertex onto stack as it is on path
+    
+        if source == destination:
+            return stack
+
+        for e in self.incidentEdges(source):
+            if edgeLabels[e] == 'UNEXPLORED':
+                u = self.oppositeVertexOnEdge(source, e)
+                if vertexLabels[u] == 'UNEXPLORED':
+                    edgeLabels[e] = 'DISCOVERY'
+                    stack.append(e)
+                    partialpath = self.__findPathDFS(u, destination, vertexLabels, edgeLabels, stack)
+                    if partialpath:
+                        return partialpath
+                    stack.pop()
+                else:
+                    edgeLabels[e] = 'BACK'
+        stack.pop()
+
+    def hasPathDFS(self, source, destination, visited = set()):
+        """Method to return boolean indicating if there is a path from source to destination in graph using DFS"""
+        # Base cases / stopping conditions
+        if source == destination:
+            return True
+        if source in visited:
+            return False
+        # Mark vertex as visited
+        visited.add(source)
+        # Iterate through neighours of source vertex
+        for neighbour in self.adjacentVertices(source):
+            # Inductive step: Do some work to shrink the problem space
+            if self.hasPathDFS(neighbour, destination, visited):
+                return True
+        return False
+           
+    def isCyclic(self):
+        """
+        Method to detect simple cycle in graph using DFS.
+        Simple cycle: A simple cycle is a non-empty trail 
+        in a graph with no repeated vertices (except for 
+        the beginning and ending vertex). A cycle is a path
+        that is also a circuit and a closed walk.
+        """
+        visited = set()
+        for vertex in self.__vertices:
+            if vertex not in visited:
+                # Call recursive helper function to detect cycle in different DFS trees
+                if self.__isCyclic(vertex, visited):
+                    return True
+        return False
+
+    def __isCyclic(self, vertex, visited, parent = None):
+        """Helper Method to detect cycle in graph using DFS"""
+        visited.add(vertex) # Mark vertex as visited
+        # Recur for all the vertices adjacent to this vertex
+        for neighbour in self.adjacentVertices(vertex):
+            if neighbour not in visited:
+                if self.__isCyclic(neighbour, visited, vertex):
+                    return True
+            # If an adjacent vertex is visited and is not the
+            # parent of the current vertex then there is a cycle
+            elif parent != neighbour:
+                return True
+        return False
+
+
 
 if __name__ == '__main__':
     simplegraph = EdgeListGraph()
@@ -587,3 +679,45 @@ if __name__ == '__main__':
 
     # Count connected components
     print("Connected components count of graph: {}".format(simplegraph2.countConnectedComponents()))
+
+    # Find Path DFS: Only works individually not in sequence
+    print("Find path from {} to {}: {}".format('a', 'f', simplegraph2.findPathDFS('a', 'f')))
+    print("Find path from {} to {}: {}".format('a', 'e', simplegraph2.findPathDFS('a', 'e')))
+
+    # Has Path DFS: Only works individually not in sequence
+    #print("Has path from {} to {}: {}".format('f', 'c', simplegraph2.hasPathDFS('f', 'c')))
+    #print("Has path from {} to {}: {}".format('f', 'e', simplegraph2.hasPathDFS('f', 'e')))
+    print("Has path from {} to {}: {}".format('a', 'c', simplegraph2.hasPathDFS('a', 'c')))
+
+    # Detect cycle DFS
+    print("Cycle in graph: {}".format(simplegraph2.isCyclic()))
+
+    # Linebreak in CMD
+    print("********NEW GRAPH********")
+
+    # Define new graph
+    simplegraph3 = EdgeListGraph()
+    simplegraph3.addVertex(0)
+    simplegraph3.addVertex(1)
+    simplegraph3.addVertex(2)
+    simplegraph3.addVertex(3)
+    simplegraph3.addVertex(4)
+    simplegraph3.addEdge(0, 1)
+    simplegraph3.addEdge(0, 2)
+    simplegraph3.addEdge(0, 3)
+    simplegraph3.addEdge(1, 2)
+    simplegraph3.addEdge(3, 4)
+
+    # Print the definition of the second graph
+    print("Vertices of G: {}".format(list(simplegraph3.vertices())))
+    print("Edges of G: {}".format(list(simplegraph3.edges())))
+
+    # Print the degree sequence of the graph
+    print("Degree sequence of graph: {}".format(simplegraph3.getDegreeSequence()))
+
+    # Print degree of vertices
+    for vertex in simplegraph3.vertices():
+        print("Degree of vertex {}: {}".format(vertex, simplegraph3.degree(vertex)))
+
+    # Detect Cycle DFS
+    print("Cycle in graph: {}".format(simplegraph3.isCyclic()))
