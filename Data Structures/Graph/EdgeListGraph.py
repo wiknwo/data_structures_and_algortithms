@@ -543,7 +543,22 @@ class EdgeListGraph:
                 return True
         return False
 
+    def isCutEdge(self, e):
+        """Method to check whether an edge is a cut-edge/bridge"""
+        if self.hasEdge(e[0], e[1], e[2]):
+            wG = self.countConnectedComponents()
+            self.removeEdge(e[0], e[1], e[2])
+            wGWithoutE = self.countConnectedComponents()
+            self.addEdge(e[0], e[1], e[2])
+            return wGWithoutE > wG
 
+    def findAllCutEdges(self):
+        """Method to find all cut edges in graph"""
+        return set(e for e in self.__edges if self.isCutEdge(e))
+
+    def isTree(self):
+        """Method to check if a graph is a tree"""
+        return self.isConnected() and not self.isCyclic()
 
 if __name__ == '__main__':
     simplegraph = EdgeListGraph()
@@ -708,7 +723,7 @@ if __name__ == '__main__':
     simplegraph3.addEdge(1, 2)
     simplegraph3.addEdge(3, 4)
 
-    # Print the definition of the second graph
+    # Print the definition of the third graph
     print("Vertices of G: {}".format(list(simplegraph3.vertices())))
     print("Edges of G: {}".format(list(simplegraph3.edges())))
 
@@ -721,3 +736,9 @@ if __name__ == '__main__':
 
     # Detect Cycle DFS
     print("Cycle in graph: {}".format(simplegraph3.isCyclic()))
+
+    # Find all cut edges in graph
+    print("All cut-edges in graph: {}".format(simplegraph3.findAllCutEdges()))
+
+    # Check if graph is a tree
+    print("Graph is tree: {}".format(simplegraph3.isTree()))
