@@ -182,7 +182,7 @@ class EdgeListGraph:
         if not self.hasVertex(v):
             raise ValueError('Vertex not in graph!')
         else:
-            return [e for e in self.__edges if v in e]
+            return [e for e in self.__edges if v == e[0] or v == e[1]]
 
     def oppositeVertexOnEdge(self, v, e):
         """Method to return the opposite vertex on the given edge in the graph"""
@@ -556,6 +556,22 @@ class EdgeListGraph:
         """Method to find all cut edges in graph"""
         return set(e for e in self.__edges if self.isCutEdge(e))
 
+    def isCutVertex(self, v):
+        """Method to check if a vertex is a cut-vertex"""
+        if self.hasVertex(v):
+            wG = self.countConnectedComponents()
+            tmp = self.incidentEdges(v)
+            self.removeVertex(v)
+            wGWithoutV = self.countConnectedComponents()
+            self.addVertex(v)
+            for e in tmp:
+                self.addEdge(e[0], e[1], e[2])
+            return wGWithoutV > wG
+
+    def findAllCutVertices(self):
+        """Method to find all cut-vertices in graph"""
+        return set(v for v in self.__vertices if self.isCutVertex(v))
+
     def isTree(self):
         """Method to check if a graph is a tree"""
         return self.isConnected() and not self.isCyclic()
@@ -742,3 +758,6 @@ if __name__ == '__main__':
 
     # Check if graph is a tree
     print("Graph is tree: {}".format(simplegraph3.isTree()))
+
+    # Find all cut vertices in graph
+    print("All cut-vertices in graph: {}".format(simplegraph3.findAllCutVertices()))
