@@ -576,6 +576,32 @@ class EdgeListGraph:
         """Method to check if a graph is a tree"""
         return self.isConnected() and not self.isCyclic()
 
+    def shortestPathUnweighted(self, source, destination):
+        """
+        Method to find shortest path between two vertices
+        in graph with distance between two vertices being 
+        the number of edges between them as we are assuming
+        that edges are unwieghted.
+
+        Params:
+            source(): The start vertex
+            destination(): The end vertex
+
+        Returns:
+            distance: The shortest path length between source and destination measured in number of edges
+            -1: If there is no such path between source and destination
+        """
+        visited, q = set(), [(source, 0)] # Distance from start is 0 initially
+        while q:
+            current, distance = q.pop(0)
+            if current == destination:
+                return distance
+            for neighbour in self.adjacentVertices(current):
+                if neighbour not in visited:
+                    visited.add(neighbour)
+                    q.append((neighbour, distance + 1))
+        return -1
+
 if __name__ == '__main__':
     simplegraph = EdgeListGraph()
     simplegraph.addVertex(1)
@@ -761,3 +787,6 @@ if __name__ == '__main__':
 
     # Find all cut vertices in graph
     print("All cut-vertices in graph: {}".format(simplegraph3.findAllCutVertices()))
+
+    # Find the length of the shortest path between source and destination
+    print("Shortest path between {} and {} is of length: {}".format(0, 4, simplegraph3.shortestPathUnweighted(0, 4)))
