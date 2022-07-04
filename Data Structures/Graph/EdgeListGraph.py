@@ -161,11 +161,11 @@ class EdgeListGraph:
         else: 
             return sum(1 for e in self.__edges if v == e[0] or v == e[1])
 
-    def n(self):
+    def order(self):
         """Method to return number of vertices (order) in graph"""
         return len(self.__vertices)
 
-    def m(self):
+    def size(self):
         """Method to return number of edges (size) in graph"""
         return len(self.__edges)
 
@@ -638,29 +638,29 @@ if __name__ == '__main__':
     # Remove an edge from the graph
     print("Remove edge: ({}, {}, {}) to graph".format(1, 2, 0))
     simplegraph.removeEdge(1, 2)
-    print("Number of vertices in graph: {}".format(simplegraph.n()))
-    print("Number of edges in graph: {}".format(simplegraph.m()))
+    print("Number of vertices in graph: {}".format(simplegraph.order()))
+    print("Number of edges in graph: {}".format(simplegraph.size()))
 
     # Remove an edge from the graph that doesn't exist
     try:
         print("Remove edge: ({}, {}, {}) to graph".format(1, 3, 0))
         simplegraph.removeEdge(1, 3)
-        print("Number of vertices in graph: {}".format(simplegraph.n()))
-        print("Number of edges in graph: {}".format(simplegraph.m()))
+        print("Number of vertices in graph: {}".format(simplegraph.order()))
+        print("Number of edges in graph: {}".format(simplegraph.size()))
     except:
         print("Edge does not exist in graph")
     
     # Add an edge to the graph
     print("Add edge: ({}, {}, {}) to graph".format(1, 2, 0))
     simplegraph.addEdge(1, 2)
-    print("Number of vertices in graph: {}".format(simplegraph.n()))
-    print("Number of edges in graph: {}".format(simplegraph.m()))
+    print("Number of vertices in graph: {}".format(simplegraph.order()))
+    print("Number of edges in graph: {}".format(simplegraph.size()))
 
     # Remove a vertex from the graph
     print("Remove vertex: {} from graph".format(2))
     simplegraph.removeVertex(2)
-    print("Number of vertices in graph: {}".format(simplegraph.n()))
-    print("Number of edges in graph: {}".format(simplegraph.m()))
+    print("Number of vertices in graph: {}".format(simplegraph.order()))
+    print("Number of edges in graph: {}".format(simplegraph.size()))
 
     # Display the weight of the graph
     print("Weight of graph: {}".format(simplegraph.weightOfGraph()))
