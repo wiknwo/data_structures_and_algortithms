@@ -1,3 +1,5 @@
+import heapq
+import random
 import sys
 sys.path.insert(1, '../')
 from Set.disjointset import DisjointSet
@@ -632,7 +634,7 @@ class EdgeListGraph:
         spanning tree.
         """
         # Minimum Spanning Tree represented as a set of edges
-        mst = set()
+        mst, min_cost = set(), 0
         # Disjoint set to determine if  two vertices are aprt of same tree
         ds = DisjointSet()
         # 1. Sort edges in ascending order
@@ -644,8 +646,9 @@ class EdgeListGraph:
         for e in copy_of_edges:
             if ds.find(e[0]) != ds.find(e[1]):
                 mst.add(e)
+                min_cost += e[2]
                 ds.union(e[0], e[1])
-        return mst
+        return min_cost
 
     def primsAlgorithm(self):
         """
@@ -656,8 +659,21 @@ class EdgeListGraph:
         from an arbitrary starting vertex, at each step adding 
         the cheapest possible connection from the tree to 
         another vertex.
-        """            
+
+        1. Initialize a tree with a single vertex, chosen 
+        arbitrarily from the graph.
+        2. Grow the tree by one edge: of the edges that 
+        connect the tree to vertices not yet in the tree, 
+        find the minimum-weight edge, and transfer it to 
+        the tree.
+        3. Repeat step 2 (until all vertices are in the tree).
+        """
         pass
+                    
+
+
+
+        
 
 g = EdgeListGraph()
 g.addVertex(0)
