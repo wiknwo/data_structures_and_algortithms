@@ -20,7 +20,7 @@ graph contains a particular edge, we have to search through
 the edge list. If the edges appear in the edge list in no 
 particular order, that's a linear search through |E| edges.
 
-|V| = n, |E| = m
+|V| = n = order, |E| = m = size
 
 ************ ADVANTAGES ************
 - Space-efficient for sparse graphs
