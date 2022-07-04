@@ -1,3 +1,6 @@
+import sys
+sys.path.insert(1, '../')
+from Set.disjointset import DisjointSet
 """
 Simple Graph: A graph with no self loops or parallel edges.
 
@@ -92,7 +95,9 @@ class EdgeListGraph:
         if not self.hasVertex(d):
             raise ValueError('Destination vertex not in the graph!')
         if self.hasEdge(s, d, w) or self.hasEdge(d, s, w):
-            raise ValueError('No parallel edges or self loops in graph!')
+            raise ValueError('No parallel edges in graph!')
+        if s == d:
+            raise ValueError('No self loops in graph!')
         else:
             self.__edges.add((s, d, w))
 
@@ -175,7 +180,10 @@ class EdgeListGraph:
 
     def areAdjacentVertices(self, u, v):
         """Method that returns boolean indictaing whether vertices u and v are adjacent in the graph"""
-        return u in self.adjacentVertices(v) and v in self.adjacentVertices(v)
+        if not self.hasVertex(u) or not self.hasVertex(v):
+            raise ValueError('Vertex not in the graph!')
+        else:    
+            return u in self.adjacentVertices(v) and v in self.adjacentVertices(u)
     
     def incidentEdges(self, v):
         """Method to return list of edges incident to v in graph"""
@@ -252,7 +260,6 @@ class EdgeListGraph:
     def __dfs(self, vertex, vLabels, eLabels):
         """Method to perform depth-first search starting from a given node in graph"""
         vLabels[vertex] = 'VISITED'
-        print(vertex)
         for e in self.incidentEdges(vertex):
             if eLabels[e] == 'UNEXPLORED':
                 u = self.oppositeVertexOnEdge(vertex, e)
@@ -602,191 +609,64 @@ class EdgeListGraph:
                     q.append((neighbour, distance + 1))
         return -1
 
-if __name__ == '__main__':
-    simplegraph = EdgeListGraph()
-    simplegraph.addVertex(1)
-    simplegraph.addVertex(2)
-    simplegraph.addVertex(3)
-    simplegraph.addEdge(1, 2)
-    simplegraph.addEdge(2, 3)
+    def kruskalsAlgorithm(self):
+        """
+        Kruskal's algorithm finds a minimum spanning forest of 
+        an undirected edge-weighted graph. If the graph is 
+        connected, it finds a minimum spanning tree. (A minimum 
+        spanning tree of a connected graph is a subset of the 
+        edges that forms a tree that includes every vertex, where 
+        the sum of the weights of all the edges in the tree is 
+        minimized. For a disconnected graph, a minimum 
+        spanning forest is composed of a minimum spanning tree 
+        for each connected component.) It is a greedy 
+        algorithm in graph theory as in each step it adds the 
+        next lowest-weight edge that will not form a cycle to 
+        the minimum spanning forest.
 
-    # Depth-First Print
-    print("Depth-First Print")
-    simplegraph.depthFirstPrint()
-    
-    # Print definition of our simple graph
-    print("Vertices of G: {}".format(list(simplegraph.vertices())))
-    print("Edges of G: {}".format(list(simplegraph.edges())))
+        1. Sort all the edges in non-decreasing order of their weight. 
+        2. Pick the smallest edge. Check if it forms a cycle 
+        with the spanning tree formed so far. If cycle is not 
+        formed, include this edge. Else, discard it. 
+        3. Repeat step 2 until there are (V-1) edges in the 
+        spanning tree.
+        """
+        # Minimum Spanning Tree represented as a set of edges
+        mst = set()
+        # Disjoint set to determine if  two vertices are aprt of same tree
+        ds = DisjointSet()
+        # 1. Sort edges in ascending order
+        copy_of_edges = sorted(self.__edges, key=lambda e:e[2])
+        copy_of_vertices = self.__vertices.copy()
+        # 2. and 3.  
+        for v in copy_of_vertices:
+            ds.make_set(v)
+        for e in copy_of_edges:
+            if ds.find(e[0]) != ds.find(e[1]):
+                mst.add(e)
+                ds.union(e[0], e[1])
+        return mst
 
-    # Print the degree sequence of the graph
-    print("Degree sequence of graph: {}".format(simplegraph.getDegreeSequence()))
+    def primsAlgorithm(self):
+        """
+        Prim's algorithm (also known as Jarník's algorithm) 
+        is a greedy algorithm that finds a minimum spanning 
+        tree for a weighted undirected graph. . The algorithm 
+        operates by building this tree one vertex at a time, 
+        from an arbitrary starting vertex, at each step adding 
+        the cheapest possible connection from the tree to 
+        another vertex.
+        """            
+        pass
 
-    # Print the edges incident to specified vertex
-    print("Edges incident to vertex {}: {}".format(1, simplegraph.incidentEdges(1)))
-
-    # Print the degrees of our vertices
-    for i in range(3):
-        print("Degree of vertex {} = {}".format(i + 1, simplegraph.degree(i + 1)))
-
-    # Print neighbours or adjacent vertices of vertex 2
-    print("Neighoburs of {}: {}".format(2, simplegraph.adjacentVertices(2)))
-
-    # Print number of vertices and edges
-    print("Number of vertices in graph: {}".format(simplegraph.n()))
-    print("Number of edges in graph: {}".format(simplegraph.m()))
-
-    # Remove an edge from the graph
-    print("Remove edge: ({}, {}, {}) to graph".format(1, 2, 0))
-    simplegraph.removeEdge(1, 2)
-    print("Number of vertices in graph: {}".format(simplegraph.order()))
-    print("Number of edges in graph: {}".format(simplegraph.size()))
-
-    # Remove an edge from the graph that doesn't exist
-    try:
-        print("Remove edge: ({}, {}, {}) to graph".format(1, 3, 0))
-        simplegraph.removeEdge(1, 3)
-        print("Number of vertices in graph: {}".format(simplegraph.order()))
-        print("Number of edges in graph: {}".format(simplegraph.size()))
-    except:
-        print("Edge does not exist in graph")
-    
-    # Add an edge to the graph
-    print("Add edge: ({}, {}, {}) to graph".format(1, 2, 0))
-    simplegraph.addEdge(1, 2)
-    print("Number of vertices in graph: {}".format(simplegraph.order()))
-    print("Number of edges in graph: {}".format(simplegraph.size()))
-
-    # Remove a vertex from the graph
-    print("Remove vertex: {} from graph".format(2))
-    simplegraph.removeVertex(2)
-    print("Number of vertices in graph: {}".format(simplegraph.order()))
-    print("Number of edges in graph: {}".format(simplegraph.size()))
-
-    # Display the weight of the graph
-    print("Weight of graph: {}".format(simplegraph.weightOfGraph()))
-
-    # Print whether the specificied vertices are adjacent
-    print("Vertices {} and {} are adjacent in graph: {}".format(1, 3, simplegraph.areAdjacentVertices(1, 3)))
-
-    # Print the edges incident to specified vertex
-    print("Edges incident to vertex {}: {}".format(1, simplegraph.incidentEdges(1)))
-
-    # Print definition of our simple graph
-    print("Vertices of G: {}".format(list(simplegraph.vertices())))
-    print("Edges of G: {}".format(list(simplegraph.edges())))
-
-    # Print the degree sequence of the graph
-    print("Degree sequence of graph: {}".format(simplegraph.getDegreeSequence()))
-
-    # Linebreak in CMD
-    print("********NEW GRAPH********")
-
-    # Create a second graph
-    simplegraph2 = EdgeListGraph()
-    simplegraph2.addVertex('a')
-    simplegraph2.addVertex('b')
-    simplegraph2.addVertex('c')
-    simplegraph2.addVertex('d')
-    simplegraph2.addVertex('e')
-    simplegraph2.addVertex('f')
-    simplegraph2.addEdge('a', 'b')
-    simplegraph2.addEdge('a', 'c')
-    simplegraph2.addEdge('b', 'd')
-    simplegraph2.addEdge('c', 'e')
-    simplegraph2.addEdge('d', 'f')
-    
-    # Print the definition of the second graph
-    print("Vertices of G: {}".format(list(simplegraph2.vertices())))
-    print("Edges of G: {}".format(list(simplegraph2.edges())))
-
-    # Print the degree sequence of the graph
-    print("Degree sequence of graph: {}".format(simplegraph2.getDegreeSequence()))
-
-    # Depth-First Print
-    print("Depth-First Print")
-    simplegraph2.depthFirstPrint()
-
-    # Depth-First Print Recursive
-    print("Depth-First Print Recursive")
-    simplegraph2.depthFirstPrintRecursive()
-
-    # Depth-First Print from Vertex
-    print("Breadth-First Print")
-    simplegraph2.breadthFirstPrint()
-
-    # Depth-First Search
-    print("Depth-First Search (DFS)")
-    simplegraph2.dfs()
-
-    # Breadth-First Search
-    print("Breadth-First Search (BFS)")
-    simplegraph2.bfs()
-
-    # Check if graph is connected
-    print("Graph is connected: {}".format(simplegraph2.isConnected()))
-
-    # Count connected components
-    print("Connected components count of graph: {}".format(simplegraph2.countConnectedComponents()))
-
-    # Remove edge
-    simplegraph2.removeEdge('e', 'c')
-
-    # Check if graph is connected
-    print("Graph is connected: {}".format(simplegraph2.isConnected()))
-
-    # Count connected components
-    print("Connected components count of graph: {}".format(simplegraph2.countConnectedComponents()))
-
-    # Find Path DFS: Only works individually not in sequence
-    print("Find path from {} to {}: {}".format('a', 'f', simplegraph2.findPathDFS('a', 'f')))
-    print("Find path from {} to {}: {}".format('a', 'e', simplegraph2.findPathDFS('a', 'e')))
-
-    # Has Path DFS: Only works individually not in sequence
-    #print("Has path from {} to {}: {}".format('f', 'c', simplegraph2.hasPathDFS('f', 'c')))
-    #print("Has path from {} to {}: {}".format('f', 'e', simplegraph2.hasPathDFS('f', 'e')))
-    print("Has path from {} to {}: {}".format('a', 'c', simplegraph2.hasPathDFS('a', 'c')))
-
-    # Detect cycle DFS
-    print("Cycle in graph: {}".format(simplegraph2.isCyclic()))
-
-    # Linebreak in CMD
-    print("********NEW GRAPH********")
-
-    # Define new graph
-    simplegraph3 = EdgeListGraph()
-    simplegraph3.addVertex(0)
-    simplegraph3.addVertex(1)
-    simplegraph3.addVertex(2)
-    simplegraph3.addVertex(3)
-    simplegraph3.addVertex(4)
-    simplegraph3.addEdge(0, 1)
-    simplegraph3.addEdge(0, 2)
-    simplegraph3.addEdge(0, 3)
-    simplegraph3.addEdge(1, 2)
-    simplegraph3.addEdge(3, 4)
-
-    # Print the definition of the third graph
-    print("Vertices of G: {}".format(list(simplegraph3.vertices())))
-    print("Edges of G: {}".format(list(simplegraph3.edges())))
-
-    # Print the degree sequence of the graph
-    print("Degree sequence of graph: {}".format(simplegraph3.getDegreeSequence()))
-
-    # Print degree of vertices
-    for vertex in simplegraph3.vertices():
-        print("Degree of vertex {}: {}".format(vertex, simplegraph3.degree(vertex)))
-
-    # Detect Cycle DFS
-    print("Cycle in graph: {}".format(simplegraph3.isCyclic()))
-
-    # Find all cut edges in graph
-    print("All cut-edges in graph: {}".format(simplegraph3.findAllCutEdges()))
-
-    # Check if graph is a tree
-    print("Graph is tree: {}".format(simplegraph3.isTree()))
-
-    # Find all cut vertices in graph
-    print("All cut-vertices in graph: {}".format(simplegraph3.findAllCutVertices()))
-
-    # Find the length of the shortest path between source and destination
-    print("Shortest path between {} and {} is of length: {}".format(0, 4, simplegraph3.shortestPathUnweighted(0, 4)))
+g = EdgeListGraph()
+g.addVertex(0)
+g.addVertex(1)
+g.addVertex(2)
+g.addVertex(3)
+g.addEdge(0, 1, 10)
+g.addEdge(0, 2, 6)
+g.addEdge(0, 3, 5)
+g.addEdge(1, 3, 15)
+g.addEdge(2, 3, 4)
+print(g.kruskalsAlgorithm())
