@@ -666,6 +666,11 @@ class EdgeListGraph:
         find the minimum-weight edge, and transfer it to 
         the tree.
         3. Repeat step 2 (until all vertices are in the tree).
+
+        IMPORTANT POINT ON HEAPQ: According to the example 
+        from the documentation, you can use tuples, and it 
+        will sort by the first element of the tuple
+        https://stackoverflow.com/questions/3954530/how-to-make-heapq-evaluate-the-heap-off-of-a-specific-attribute
         """
         # Weight of minimum spanning tree
         min_weight = 0
