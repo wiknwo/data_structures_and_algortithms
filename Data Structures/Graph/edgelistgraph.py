@@ -743,7 +743,7 @@ class EdgeListGraph:
                         heapq.heappush(q, [distances[neighbour], neighbour])
         return distances
 
-    def aStarAlgorithm(source, destination):
+    def aStarAlgorithm(self, source, destination):
         """
         A* is a graph traversal and path search algorithm, 
         which is often used in many fields of computer 
@@ -796,7 +796,75 @@ class EdgeListGraph:
         cost of the shortest path, since h at the goal is zero 
         in an admissible heuristic.
         """
-        pass
+        # Heap-based priority queue representing the open set
+        # or fringe or frontier which are the discovered vertices
+        # that may need to be (re-)expanded
+        fringe = [] 
+        # Variable to keep track of order in which vertices
+        # enter the fringe. We use this to break ties when
+        # two vertices have the same fScore
+        count = 0
+        # Dictionary with key: vertex, value: vertex. For 
+        # vertex v, came_from[v] is the vertex immediately 
+        # preceding it on the cheapest path from start
+        # to v currently known.
+        came_from = {}
+        # Dictionary with key: vertex, value: number. For 
+        # vertex v, g_score[v] is the cost of the cheapest 
+        # path from start to v currently known. 
+        g_score = {vertex: float('inf') for vertex in self.__vertices}
+        # Set the g_score of the source vertex to 0.
+        g_score[source] = 0
+        # Dictionary with key: vertex, value: number. For 
+        # vertex v, f_score[v] := g_score[v] + h(v). f_score[v] 
+        # represents our current best guess as to how cheap 
+        # a path could be from start to finish if it goes 
+        # through v.
+        f_score = {vertex: float('inf') for vertex in self.__vertices}
+        # Set the f_score of the source vertex to h(source).
+        f_score[source] = self.__h(source, destination)
+        # Add source to fringe
+        heapq.heappush(fringe, (f_score[source], count, source))
+        # Process vertices in A* fashion
+        while fringe:
+            current = heapq.heappop(fringe)
+            if current[2] == destination:
+                return self.__reconstruct_path(came_from, current[2])
+            for e in self.incidentEdges(current[2]):
+                neighbour = self.oppositeVertexOnEdge(current[2], e)
+                tentative_g_score = g_score[current[2]] + e[2]
+                if tentative_g_score < g_score[neighbour]:
+                    # This path to neighbour is better than any previous one, record it!
+                    came_from[neighbour] = current[2]
+                    g_score[neighbour] = tentative_g_score
+                    f_score[neighbour] = g_score[neighbour] + self.__h(neighbour, destination)
+                    if neighbour not in fringe:
+                        count += 1
+                        heapq.heappush(fringe, (f_score[neighbour], count, neighbour))
+        return False
+
+    def __h(self, source, destination):
+        """
+        Heuristic function to estimate distance from source
+        to destination. This is an A* helper function.
+        """
+        estimate = 0
+        path = self.findPathDFS(source, destination)
+        for step in path:
+            if isinstance(step, tuple):
+                estimate += step[2]
+        return estimate
+
+    def __reconstruct_path(self, came_from, current):
+        """
+        A* algorithm helper method to reconstruct path
+        from current to the source
+        """
+        total_path = [current]
+        while current in came_from.keys():
+            current = came_from[current]
+            total_path.insert(0, current)
+        return ' -> '.join(map(str, total_path))
 
 g = EdgeListGraph()
 g.addVertex(0)
@@ -822,3 +890,5 @@ g.addEdge(2, 5, 4)
 g.addEdge(5, 4, 10)
 g.addEdge(4, 3, 9)
 print(g.dijkstrasAlgorithm(0))
+print(g.findPathDFS(0, 6))
+print(g.aStarAlgorithm(0, 6))
