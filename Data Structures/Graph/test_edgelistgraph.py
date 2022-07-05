@@ -47,6 +47,18 @@ class TestEdgeListGraph(unittest.TestCase):
         self.g3.addEdge(1, 2)
         self.g3.addEdge(3, 4)
 
+        # Creating a simple graph self.g4
+        self.g4 = EdgeListGraph()
+        self.g4.addVertex(0)
+        self.g4.addVertex(1)
+        self.g4.addVertex(2)
+        self.g4.addVertex(3)
+        self.g4.addEdge(0, 1, 10)
+        self.g4.addEdge(0, 2, 6)
+        self.g4.addEdge(0, 3, 5)
+        self.g4.addEdge(1, 3, 15)
+        self.g4.addEdge(2, 3, 4)
+
     def tearDown(self):
         pass
 
@@ -157,6 +169,18 @@ class TestEdgeListGraph(unittest.TestCase):
         # Case: There does not exist a path between two vertices
         self.g3.removeEdge(3, 4)
         self.assertEqual(self.g3.shortestPathUnweighted(1, 4), -1)
+
+    def test_kruskalsAlgorithm(self):
+        # Case: Unweighted graph
+        self.assertEqual(self.g3.kruskalsAlgorithm(), 0)
+        # Case: Weighted graph
+        self.assertEqual(self.g4.kruskalsAlgorithm(), 19)
+    
+    def test_primsAlgorithm(self):
+        # Case: Unweighted graph
+        self.assertEqual(self.g3.primsAlgorithm(), 0)
+        # Case: Weighted graph
+        self.assertEqual(self.g4.primsAlgorithm(), 19)
 
 if __name__ == '__main__':
     unittest.main()

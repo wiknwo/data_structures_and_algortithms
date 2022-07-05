@@ -1,5 +1,4 @@
 import heapq
-import random
 import sys
 sys.path.insert(1, '../')
 from Set.disjointset import DisjointSet
@@ -668,21 +667,25 @@ class EdgeListGraph:
         the tree.
         3. Repeat step 2 (until all vertices are in the tree).
         """
-        pass
-                    
-
-
-
-        
-
-g = EdgeListGraph()
-g.addVertex(0)
-g.addVertex(1)
-g.addVertex(2)
-g.addVertex(3)
-g.addEdge(0, 1, 10)
-g.addEdge(0, 2, 6)
-g.addEdge(0, 3, 5)
-g.addEdge(1, 3, 15)
-g.addEdge(2, 3, 4)
-print(g.kruskalsAlgorithm())
+        # Weight of minimum spanning tree
+        min_weight = 0
+        # Visited set to keep track of vertices already seen
+        visited = set()
+        # Arbitrary vertex to begin growing mst cloud
+        random_vertex = next(iter(self.__vertices))
+        # Heap-based priority queue to grow mst cloud
+        q = [(0, random_vertex)]
+        # Growing minimum spanning tree cloud
+        while q:
+            weight, u = heapq.heappop(q)
+            if u in visited:
+                continue
+            else:
+                min_weight += weight
+                visited.add(u)
+                for e in self.incidentEdges(u):
+                    neighbour = self.oppositeVertexOnEdge(u, e)
+                    neighbour_weight = e[2]
+                    if neighbour not in visited:
+                        heapq.heappush(q, (neighbour_weight, neighbour))
+        return min_weight
