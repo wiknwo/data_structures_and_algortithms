@@ -694,3 +694,131 @@ class EdgeListGraph:
                     if neighbour not in visited:
                         heapq.heappush(q, (neighbour_weight, neighbour))
         return min_weight
+
+    def dijkstrasAlgorithm(self, source):
+        """
+        Dijkstra's algorithm is an algorithm for finding 
+        the shortest paths between nodes in a weighted
+        undirected graph. Dijkstra's original algorithm 
+        found the shortest path between two given nodes, 
+        but a more common variant fixes a single node as 
+        the "source" node and finds shortest paths from 
+        the source to all other nodes in the graph, 
+        producing a shortest-path tree. Dijkstra's 
+        algorithm uses a data structure for storing and 
+        querying partial solutions sorted by distance from 
+        the start. While the original algorithm uses a 
+        min-priority queue. In some fields, artificial 
+        intelligence in particular, Dijkstra's algorithm or 
+        a variant of it is known as uniform cost search and 
+        formulated as an instance of the more general idea 
+        of best-first search.
+        """    
+        # Visited set to keep track of vertices already seen
+        visited = set()
+        # Heap-based priority queue to store and query partial solutions
+        q = []
+        # Create distances dictionary
+        distances = {}
+        # Set tentative distances for all vertices
+        for u in self.__vertices:
+            if u == source:
+                distances[u] = 0
+                q.append([0, source])
+            else:
+                distances[u] = float('inf')
+        # Form shortest paths tree
+        while q:
+            distance, u = heapq.heappop(q)
+            if u in visited:
+                continue
+            else:
+                visited.add(u)
+                for e in self.incidentEdges(u):
+                    neighbour = self.oppositeVertexOnEdge(u, e)
+                    neighbour_weight = e[2]
+                    if neighbour not in visited:
+                        new_distance = distance + neighbour_weight
+                        distances[neighbour] = new_distance if new_distance < distances[neighbour] else distances[neighbour]
+                        heapq.heappush(q, [distances[neighbour], neighbour])
+        return distances
+
+    def aStarAlgorithm(source, destination):
+        """
+        A* is a graph traversal and path search algorithm, 
+        which is often used in many fields of computer 
+        science due to its completeness, optimality, and 
+        optimal efficiency. One major practical drawback 
+        is its O(b^d) space complexity, as it stores all 
+        generated nodes in memory. Compared to Dijkstra's 
+        algorithm, the A* algorithm only finds the 
+        shortest path from a specified source to a 
+        specified goal, and not the shortest-path tree 
+        from a specified source to all possible goals. 
+        This is a necessary trade-off for using a 
+        specific-goal-directed heuristic.
+
+        A* was created as part of the Shakey project, which 
+        had the aim of building a mobile robot that could 
+        plan its own actions. A* is an informed search 
+        algorithm, or a best-first search, meaning that it 
+        is formulated in terms of weighted graphs: starting 
+        from a specific starting node of a graph, it aims to 
+        find a path to the given goal node having the 
+        smallest cost (least distance travelled, shortest 
+        time, etc.). It does this by maintaining a tree of 
+        paths originating at the start node and extending 
+        those paths one edge at a time until its termination 
+        criterion is satisfied.
+
+        At each iteration of its main loop, A* needs to 
+        determine which of its paths to extend. It does 
+        so based on the cost of the path and an estimate 
+        of the cost required to extend the path all the 
+        way to the goal. Specifically, A* selects the path 
+        that minimizes f(n) = g(n) + h(n) where n is the 
+        next node on the path, g(n) is the cost of the path 
+        from the start node to n, and h(n) is a heuristic 
+        function that estimates the cost of the cheapest 
+        path from n to the goal.
+
+        Typical implementations of A* use a priority queue 
+        to perform the repeated selection of minimum 
+        (estimated) cost nodes to expand. This priority 
+        queue is known as the open set or fringe. At each 
+        step of the algorithm, the node with the lowest f(x) 
+        value is removed from the queue, the f and g values 
+        of its neighbors are updated accordingly, and these 
+        neighbors are added to the queue. The algorithm 
+        continues until a removed node (thus the node with 
+        the lowest f value out of all fringe nodes) is a goal 
+        node.[b] The f value of that goal is then also the 
+        cost of the shortest path, since h at the goal is zero 
+        in an admissible heuristic.
+        """
+        pass
+
+g = EdgeListGraph()
+g.addVertex(0)
+g.addVertex(1)
+g.addVertex(2)
+g.addVertex(3)
+g.addVertex(4)
+g.addVertex(5)
+g.addVertex(6)
+g.addVertex(7)
+g.addVertex(8)
+g.addEdge(0, 1, 4)
+g.addEdge(0, 7, 8)
+g.addEdge(1, 2, 8)
+g.addEdge(1, 7, 11)
+g.addEdge(7, 8, 7)
+g.addEdge(7, 6, 1)
+g.addEdge(6, 8, 6)
+g.addEdge(6, 5, 2)
+g.addEdge(2, 8, 2)
+g.addEdge(2, 3, 7)
+g.addEdge(2, 5, 4)
+g.addEdge(5, 4, 10)
+g.addEdge(4, 3, 9)
+print(g.dijkstrasAlgorithm(0))
