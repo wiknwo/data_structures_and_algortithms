@@ -93,6 +93,9 @@ class TestEdgeListGraph(unittest.TestCase):
         # Case: Remove valid edge in order (destination, source)
         self.g1.removeEdge(3, 2)
         self.assertEqual(self.g1.size(), 0)
+        # Case: Source and Destination vertices exist but edge does not exist between them (source, destination)
+        # Case: Source and Destination vertices exist but edge does not exist between them (destination, source)
+        
 
     def test_removeVertex(self):
         # Case: Vertex does not exist in graph
