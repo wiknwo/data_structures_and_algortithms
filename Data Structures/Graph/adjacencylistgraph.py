@@ -76,6 +76,14 @@ class AdjacencyListGraph:
         """Method to return all the edges in the graph as an iterable"""
         return iter(self.__adjacencylist.values())
 
+    def order(self):
+        """Method to return number of vertices (order) in graph"""
+        return len(self.__adjacencylist)
+
+    def size(self):
+        """Method to return number of edges (size) in graph"""
+        return sum(map(len, self.__adjacencylist.values())) // 2
+
     def has_vertex(self, v):
         """Method to return boolean indicating if a vertex is in the graph"""
         return v in self.__adjacencylist
